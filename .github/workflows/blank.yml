@@ -1,0 +1,66 @@
+# 전산물리학 과제
+
+
+import numpy as np
+import pandas as pd #판다스 데이터처리. 수업시간에 쓴걸로 대체가능
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit # 적분
+
+
+
+
+data = pd.read_csv('hist2.csv', header=None)
+E = data[0].values
+counts = data[1].values
+
+def double_gaussian(E, A1, mu1, sigma1, A2, mu2, sigma2):
+    return (A1 * np.exp(-(E - mu1)**2 / (2 * sigma1**2)) + A2 * np.exp(-(E - mu2)**2 / (2 * sigma2**2)))
+
+p0 = [100, 2.0, 0.1, 80, 3.0, 0.1]
+#초기값인데 그래프를 이용해서 직접 추정할 수 있을지도?
+
+
+popt, pcov = curve_fit(double_gaussian, E, counts, p0=p0)
+A1, mu1, sigma1, A2, mu2, sigma2 = popt
+
+
+fA = A1 * np.exp(-(E - mu1)**2 / (2 * sigma1**2))
+fB = A2 * np.exp(-(E - mu2)**2 / (2 * sigma2**2))
+
+plt.figure(figsize=(8,6))
+
+plt.bar(E, counts, width=0.05, color='gray', alpha=0.4, label='Measured Data')
+#히스토그램
+
+
+
+
+
+plt.scatter(E, counts, s=10, label='Data')
+plt.plot(E, double_gaussian(E, *popt), 'r-', label='Total Fit')
+plt.plot(E, fA, 'g--', label='Particle A')
+plt.plot(E, fB, 'b--', label='Particle B')
+
+plt.xlabel('Energy')
+plt.ylabel('Count')
+plt.legend()
+plt.title('가우시안(gaussian) 함수 피팅')
+
+
+
+
+
+
+# 적분값 계산  비율내기
+
+
+area_A = A1 * sigma1 * np.sqrt(2*np.pi)
+area_B = A2 * sigma2 * np.sqrt(2*np.pi)
+
+ratio = area_A / area_B
+
+print(f"입자 A와 B의 생성비 (A:B) = {ratio:.2f} : 1")
+plt.text(0.5, max(counts)*0.9, f'면적비율 A1/A2 = {ratio:.2f}', fontsize=12, color='black')
+
+
+plt.show()
