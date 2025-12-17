@@ -1,4 +1,4 @@
-# 라이트 아기동진이
+# 라이트버젼 모델수감소
 # ============================================================
 # 0. 라이브러리 불러오기
 # ============================================================
@@ -266,11 +266,11 @@ print("   리뷰를 입력하면 BERT가 별점을 매겨줍니다. (종료: q)"
 while True:
     text = input("\n리뷰를 입력하세요 (종료하려면 q): ").strip()
     if text.lower() == "q":
-        print("종료합니다. 오늘도 고생 많았어 두목 💚")
+        print("종료")
         break
 
     if not text:
-        print("공백 말고 내용을 좀 써줘요 두목 🥺")
+        print("-")
         continue
 
     pred_label, probs = predict_single_review(text, model, tokenizer, MAX_LEN, device)
